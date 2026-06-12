@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Responsividade em dispositivos móveis -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard Admin</title>
+
+    <!-- CSS da tela -->
+    <link rel="stylesheet" href="../CSS/dashboard-admin.css">
+    <link rel="stylesheet" href="../CSS/responsive.css">
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="header">
+
+        <!-- Logo do sistema -->
+        <div class="logo">
+            GPAcademy
+        </div>
+
+        <!-- Menu de navegação do administrador -->
+        <nav class="menu">
+            <a href="#" class="active">Usuários</a>
+            <a href="gestao-projetos-admin.html">Projetos</a>
+        </nav>
+
+        <button type="button" class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menu" aria-expanded="false">
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+        </button>
+
+
+        <!-- Área do usuário logado -->
+        <div class="icons">
+
+            <div class="user-box">
+                <div class="user-avatar">
+                    👤
+                </div>
+
+                <div class="user-info">
+                    <strong id="nomeUsuario">Usuário</strong>
+                    <span id="tipoUsuario">Administrador</span>
+                </div>
+            </div>
+
+            <!-- Botão de logout -->
+            <button onclick="logout()" class="logout-btn">
+                ⏻
+            </button>
+
+        </div>
+
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container">
+
+        <!-- Título da página e botões principais -->
+        <div class="topo">
+
+            <div>
+                <p class="mini-title">
+                    PAINEL ADMINISTRATIVO
+                </p>
+
+                <h1 class="title">
+                    Gestão de Usuários
+                </h1>
+            </div>
+
+            <div class="top-buttons">
+
+                <button onclick="cadastrarUsuario()" class="btn-primary">
+                    + Cadastrar Usuário
+                </button>
+
+                <button onclick="abrirCadastroCurso()" class="btn-primary">
+                    + Cadastrar Curso
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Tabela de usuários -->
+        <section class="table-box">
+
+            <div class="table-header">
+                <h2>Usuários do Sistema</h2>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Curso</th>
+                        <th>Período</th>
+                        <th>Perfil</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <!-- O JavaScript preenche os usuários aqui -->
+                <tbody id="tbodyUsuarios"></tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- MODAL DE EXCLUSÃO DE USUÁRIO -->
+    <div class="delete-user-modal" id="deleteUserModal">
+
+        <div class="delete-user-box">
+
+            <h3>Excluir Usuário</h3>
+
+            <p>
+                Deseja realmente excluir este usuário?
+            </p>
+
+            <div class="delete-user-buttons">
+                <button onclick="confirmarDeleteUsuario()">
+                    Sim, excluir
+                </button>
+
+                <button onclick="fecharDeleteUsuario()">
+                    Cancelar
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL DE LOGOUT -->
+    <div class="logout-modal" id="logoutModal">
+
+        <div class="modal-box">
+
+            <div class="modal-icon">
+                ⏻
+            </div>
+
+            <h2>Encerrar Sessão</h2>
+
+            <p>
+                Deseja realmente encerrar sua sessão no GPAcademy?
+            </p>
+
+            <div class="modal-buttons">
+
+                <button onclick="confirmarLogout()" class="btn-danger">
+                    Sim, sair
+                </button>
+
+                <button onclick="fecharModal()" class="btn-cancel">
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JavaScript da tela -->    <script src="../js/config.js"></script>
+    <script src="../js/responsive.js"></script>
+    <script src="../js/dashboard-admin.js"></script>
+
+</body>
+
+</html>

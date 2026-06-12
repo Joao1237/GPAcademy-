@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Detalhes do Projeto</title>
+
+    <link rel="stylesheet" href="../CSS/detalhes-projeto-professor.css">
+    <link rel="stylesheet" href="../CSS/responsive.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">GPAcademy</div>
+
+        <nav class="menu">
+            <a href="dashboard-professor.html" class="active">Projetos</a>
+        </nav>
+
+        <button type="button" class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menu" aria-expanded="false">
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+        </button>
+
+
+        <div class="icons">
+
+            <div class="notification-area">
+
+                <button class="notification-btn" onclick="abrirNotificacoes()">
+                    🔔
+                    <span class="notification-count">0</span>
+                </button>
+
+                <div class="notification-box" id="notificationBox">
+                    <h3>Notificações</h3>
+                </div>
+
+            </div>
+
+            <div class="user-box">
+
+                <div class="user-avatar">
+                    👤
+                </div>
+
+                <div class="user-info">
+
+                    <strong id="nomeUsuario">
+                    Usuário
+                </strong>
+
+                    <span id="tipoUsuario">
+                    Professor
+                </span>
+
+                </div>
+
+            </div>
+
+            <button onclick="logout()" class="logout-btn">
+    ⏻
+  </button>
+
+        </div>
+    </header>
+
+    <main class="container">
+
+        <button onclick="voltar()" class="back-btn">← Voltar</button>
+
+        <div class="top-info">
+            <span class="status publicado">Publicado</span>
+            <p>ADS • 4º Período</p>
+        </div>
+
+        <h1 class="title">Metodologias Ágeis na Educação Superior</h1>
+
+        <p class="descricao">
+            Projeto acadêmico destinado ao estudo das metodologias ágeis aplicadas em ambientes educacionais, com foco em organização, colaboração e acompanhamento de atividades em grupo.
+        </p>
+
+        <section class="info-box">
+
+            <div class="info-item">
+                <strong>Professor Responsável</strong>
+                <span>João Vitor</span>
+            </div>
+
+            <div class="info-item">
+                <strong>Prazo de Entrega</strong>
+                <span>15/10/2024</span>
+            </div>
+
+            <div class="info-item">
+                <strong>Curso</strong>
+                <span>ADS</span>
+            </div>
+
+            <div class="info-item">
+                <strong>Período</strong>
+                <span>4º Período</span>
+            </div>
+
+        </section>
+
+        <section class="alunos-box">
+
+            <h2>Alunos Vinculados</h2>
+
+            <div class="alunos">
+                <span>Amanda Rodrigues</span>
+                <span>Lucas Ferreira</span>
+                <span>Fernanda Lima</span>
+            </div>
+
+        </section>
+
+        <div class="buttons">
+            <button onclick="voltar()" class="btn-secondary">Voltar</button>
+            <button onclick="verEntregas()" class="btn-primary">Ver Entregas</button>
+        </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/responsive.js"></script>
+    <script src="../js/notificacoes.js"></script>
+    <script src="../js/detalhes-projeto-professor.js"></script>
+    <div class="logout-modal" id="logoutModal">
+
+        <div class="modal-box">
+
+            <div class="modal-icon">
+                ⏻
+            </div>
+
+            <h2>
+                Encerrar Sessão
+            </h2>
+
+            <p>
+                Deseja realmente encerrar sua sessão no GPAcademy?
+            </p>
+
+            <div class="modal-buttons">
+
+                <button onclick="confirmarLogout()" class="btn-danger">
+        Sim, sair
+      </button>
+
+                <button onclick="fecharModal()" class="btn-cancel">
+        Cancelar
+      </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="logout-modal" id="errorModal">
+
+        <div class="modal-box">
+
+            <div class="modal-icon">
+                ⚠️
+            </div>
+
+            <h2>
+                Atenção
+            </h2>
+
+            <p id="errorMessage">
+                Ocorreu um erro.
+            </p>
+
+            <div class="modal-buttons">
+
+                <button onclick="fecharModalErro()" class="btn-cancel">
+                OK
+            </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

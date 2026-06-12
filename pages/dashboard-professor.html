@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <!-- Configurações básicas -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard Professor</title>
+
+    <!-- CSS da tela -->
+    <link rel="stylesheet" href="../CSS/dashboard-professor.css">
+    <link rel="stylesheet" href="../CSS/responsive.css">
+
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="header">
+
+        <!-- Logo do sistema -->
+        <div class="logo">
+            GPAcademy
+        </div>
+
+        <!-- Menu de navegação -->
+        <nav class="menu">
+            <a href="#" class="active">
+                Projetos
+            </a>
+        </nav>
+
+        <button type="button" class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menu" aria-expanded="false">
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+        </button>
+
+
+        <!-- Área do usuário -->
+        <div class="icons">
+
+            <!-- Notificações -->
+            <div class="notification-area">
+
+                <button class="notification-btn" onclick="abrirNotificacoes()">
+
+                    🔔
+
+                    <span class="notification-count">0</span>
+
+                </button>
+
+                <div class="notification-box" id="notificationBox">
+                    <h3>Notificações</h3>
+                </div>
+
+            </div>
+
+            <!-- Informações do usuário -->
+            <div class="user-box">
+
+                <div class="user-avatar">
+                    👤
+                </div>
+
+                <div class="user-info">
+
+                    <strong id="nomeUsuario">
+                        Usuário
+                    </strong>
+
+                    <span id="tipoUsuario">
+                        Professor
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Logout -->
+            <button onclick="logout()" class="logout-btn">
+
+                ⏻
+
+            </button>
+
+        </div>
+
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container">
+
+        <!-- Cabeçalho da página -->
+        <div class="topo">
+
+            <div>
+
+                <h1>
+                    Gestão de Projetos
+                </h1>
+
+                <p>
+                    Visualize, filtre e acompanhe os projetos acadêmicos criados.
+                </p>
+
+            </div>
+
+            <!-- Botão novo projeto -->
+            <button onclick="novoProjeto()" class="btn-create">
+
+                + Criar Novo Projeto
+
+            </button>
+
+        </div>
+
+        <!-- Filtro por status -->
+        <div class="filters">
+
+            <strong>STATUS</strong>
+
+            <button class="active-filter">
+                Todos
+            </button>
+
+            <button>
+                Publicado
+            </button>
+
+            <button>
+                Recebido
+            </button>
+
+            <button>
+                Avaliado
+            </button>
+
+        </div>
+
+        <!-- Filtro por tipo -->
+        <div class="filters">
+
+            <strong>TIPO</strong>
+
+            <button class="active-filter">
+                Todos
+            </button>
+
+            <button>
+                Individual
+            </button>
+
+            <button>
+                Grupo
+            </button>
+
+        </div>
+
+        <!-- Filtro por período -->
+        <div class="filters" id="filtroPeriodos">
+
+            <strong>PERÍODO</strong>
+
+        </div>
+
+        <!-- Cards dos projetos -->
+        <section class="cards"></section>
+
+    </main>
+
+    <!-- MODAL DE EXCLUSÃO -->
+    <div class="delete-modal" id="deleteModal">
+
+        <div class="delete-box">
+
+            <h3>
+                Excluir Projeto
+            </h3>
+
+            <p>
+                Deseja realmente excluir este projeto?
+            </p>
+
+            <div class="delete-buttons">
+
+                <button onclick="confirmarDelete()">
+                    Sim, excluir
+                </button>
+
+                <button onclick="fecharDeleteModal()">
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL DE LOGOUT -->
+    <div class="logout-modal" id="logoutModal">
+
+        <div class="modal-box">
+
+            <div class="modal-icon">
+                ⏻
+            </div>
+
+            <h2>
+                Encerrar Sessão
+            </h2>
+
+            <p>
+                Deseja realmente encerrar sua sessão no GPAcademy?
+            </p>
+
+            <div class="modal-buttons">
+
+                <button onclick="confirmarLogout()" class="btn-danger">
+
+                    Sim, sair
+
+                </button>
+
+                <button onclick="fecharModal()" class="btn-cancel">
+
+                    Cancelar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JavaScript da tela -->
+    <script src="../js/utils/projetoStatus.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/responsive.js"></script>
+    <script src="../js/notificacoes.js"></script>
+    <script src="../js/dashboard-professor.js"></script>
+
+</body>
+
+</html>
