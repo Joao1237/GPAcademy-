@@ -8,6 +8,7 @@
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
         "test:log": "node scripts/run-tests-with-log.js",
+        "validate-connection": "node scripts/validate-connection.js",
         "build": "mkdir -p .vercel/output/static && cp -r pages js CSS .vercel/output/static/ 2>/dev/null || true"
     },
     "devDependencies": {

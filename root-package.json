@@ -1,0 +1,11 @@
+{
+    "name": "gpacademy-frontend",
+    "version": "1.0.0",
+    "description": "GPAcademy Frontend",
+    "scripts": {
+        "build": "mkdir -p .vercel/output/static && cp -r pages js CSS .vercel/output/static/"
+    },
+    "engines": {
+        "node": "18.x"
+    }
+}

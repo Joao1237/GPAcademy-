@@ -36,4 +36,6 @@ services:
       - key: NODE_ENV
         value: production
       - key: API_URL
-        sync: false
+        value: https://gpacademy-nqca.onrender.com
+      - key: PORT
+        value: 3000
