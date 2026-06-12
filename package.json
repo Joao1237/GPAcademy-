@@ -1,18 +1,19 @@
 {
-  "name": "gpacademy",
-  "version": "1.0.0",
-  "private": true,
-  "description": "GPAcademy - testes e cobertura do sistema",
-  "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:log": "node scripts/run-tests-with-log.js"
-  },
-  "devDependencies": {
-    "jest": "^30.0.4"
-  },
-  "engines": {
-    "node": ">=18"
-  }
+    "name": "gpacademy",
+    "version": "1.0.0",
+    "private": true,
+    "description": "GPAcademy - testes e cobertura do sistema",
+    "scripts": {
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "test:log": "node scripts/run-tests-with-log.js",
+        "build": "echo \"skip build\""
+    },
+    "devDependencies": {
+        "jest": "^30.0.4"
+    },
+    "engines": {
+        "node": ">=18"
+    }
 }
