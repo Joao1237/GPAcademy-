@@ -2,45 +2,58 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = (req, res) => {
-    // Get the requested path
-    let filePath = req.url;
+    // Get the full URL path
+    let filePath = req.url || '/';
 
     // Remove query parameters
     filePath = filePath.split('?')[0];
 
-    // Default to login.html if accessing root
-    if (filePath === '/' || filePath === '') {
+    // If root, serve login.html
+    if (filePath === '/') {
         filePath = '/pages/login.html';
+    }
+
+    // Remove leading slash for path.join
+    if (filePath.startsWith('/')) {
+        filePath = filePath.substring(1);
     }
 
     // Build full file path (relative to repo root)
     const fullPath = path.join(__dirname, '..', filePath);
 
-    // Check if file exists
+    console.log([API] Requested: \, Resolved: \);
+
     try {
         if (fs.existsSync(fullPath)) {
-            const ext = path.extname(fullPath);
+            const stat = fs.statSync(fullPath);
+            
+            if (stat.isDirectory()) {
+                res.status(404).json({ error: 'Not Found' });
+                return;
+            }
 
-            // Set appropriate content type
+            const ext = path.extname(fullPath).toLowerCase();
+
             let contentType = 'text/plain';
             if (ext === '.html') contentType = 'text/html; charset=utf-8';
             else if (ext === '.js') contentType = 'application/javascript';
             else if (ext === '.css') contentType = 'text/css';
             else if (ext === '.json') contentType = 'application/json';
             else if (ext === '.png') contentType = 'image/png';
-            else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+            else if (['.jpg', '.jpeg'].includes(ext)) contentType = 'image/jpeg';
+            else if (ext === '.gif') contentType = 'image/gif';
             else if (ext === '.svg') contentType = 'image/svg+xml';
 
             res.setHeader('Content-Type', contentType);
             res.setHeader('Cache-Control', 'public, max-age=3600');
 
             const fileContent = fs.readFileSync(fullPath);
-            return res.status(200).send(fileContent);
+            res.status(200).send(fileContent);
+            return;
         }
     } catch (e) {
-        // Ignore errors and fall through
+        console.error([API] Error: \);
     }
 
-    // If not found, return 404
-    res.status(404).send('Not Found');
+    res.status(404).json({ error: 'File not found' });
 };

@@ -1,7 +1,6 @@
 {
     "version": 2,
-    "rewrites": [
-        {
+    "rewrites": [{
             "source": "/api/(.*)",
             "destination": "https://gpacademy-nqca.onrender.com/$1"
         },
