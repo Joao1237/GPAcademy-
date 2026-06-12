@@ -1,9 +1,24 @@
 {
     "version": 2,
-    "buildCommand": "echo 'Static site'",
-    "outputDirectory": "public",
     "rewrites": [{
-        "source": "/api/(.*)",
-        "destination": "https://gpacademy-nqca.onrender.com/$1"
-    }]
+            "source": "/pages/(.*)",
+            "destination": "/pages/$1"
+        },
+        {
+            "source": "/js/(.*)",
+            "destination": "/js/$1"
+        },
+        {
+            "source": "/CSS/(.*)",
+            "destination": "/CSS/$1"
+        },
+        {
+            "source": "/api/(.*)",
+            "destination": "https://gpacademy-nqca.onrender.com/$1"
+        },
+        {
+            "source": "/",
+            "destination": "/pages/login.html"
+        }
+    ]
 }
