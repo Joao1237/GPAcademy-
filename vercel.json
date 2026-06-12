@@ -1,6 +1,7 @@
 {
     "version": 2,
-    "public": "public",
+    "buildCommand": "echo 'Static site'",
+    "outputDirectory": "public",
     "rewrites": [{
         "source": "/api/(.*)",
         "destination": "https://gpacademy-nqca.onrender.com/$1"
