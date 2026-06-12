@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <!-- Configurações básicas -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Detalhes do Projeto
+    </title>
+
+    <!-- CSS da tela -->
+    <link rel="stylesheet" href="../CSS/detalhes-projeto-aluno.css">
+    <link rel="stylesheet" href="../CSS/responsive.css">
+
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="header">
+
+        <!-- Logo do sistema -->
+        <div class="logo">
+            GPAcademy
+        </div>
+
+        <!-- Menu -->
+        <nav class="menu">
+
+            <a href="dashboard-aluno.html" class="active">
+                Projetos
+            </a>
+
+        </nav>
+
+        <button type="button" class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menu" aria-expanded="false">
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+            <span class="menu-toggle-bar"></span>
+        </button>
+
+
+        <!-- Área do usuário -->
+        <div class="icons">
+
+            <!-- Notificações -->
+            <div class="notification-area">
+
+                <button class="notification-btn" onclick="abrirNotificacoes()">
+                    🔔
+                    <span class="notification-count">0</span>
+                </button>
+
+                <div class="notification-box" id="notificationBox">
+                    <h3>Notificações</h3>
+                </div>
+
+            </div>
+
+            <!-- Usuário logado -->
+            <div class="user-box">
+
+                <div class="user-avatar">
+                    👤
+                </div>
+
+                <div class="user-info">
+
+                    <strong id="nomeUsuario">
+                        Usuário
+                    </strong>
+
+                    <span id="tipoUsuario">
+                        Aluno
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Logout -->
+            <button onclick="logout()" class="logout-btn">
+
+                ⏻
+
+            </button>
+
+        </div>
+
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container">
+
+        <!-- Botão voltar -->
+        <button onclick="voltar()" class="back-btn">
+
+            ← Voltar
+
+        </button>
+
+        <!-- Conteúdo carregado pelo JavaScript -->
+        <div id="conteudoProjeto">
+
+            <!-- Status do projeto -->
+            <div class="top-info">
+
+                <span class="status">
+                    Pendente
+                </span>
+
+            </div>
+
+            <!-- Título do projeto -->
+            <h1 class="title" id="tituloProjeto">
+
+                Carregando...
+
+            </h1>
+
+            <!-- Matéria -->
+            <p class="materia-info">
+
+                <strong>
+                    Matéria:
+                </strong>
+
+                <span id="materiaProjeto"></span>
+
+            </p>
+
+            <!-- Descrição -->
+            <div class="descricao-box">
+
+                <strong>
+                    Descrição:
+                </strong>
+
+                <p class="descricao" id="descricaoProjeto">
+
+                    Carregando descrição...
+
+                </p>
+
+            </div>
+
+            <!-- Informações do projeto -->
+            <section class="info-box">
+
+                <div class="info-item">
+
+                    <strong>
+                        Prazo de Entrega
+                    </strong>
+
+                    <span id="prazoProjeto">
+                        --
+                    </span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <strong>
+                        Período
+                    </strong>
+
+                    <span id="periodoProjeto">
+                        --
+                    </span>
+
+                </div>
+
+            </section>
+
+            <!-- Upload do trabalho -->
+            <div class="upload-box">
+
+                <label>
+                    Nome do arquivo
+                </label>
+
+                <input type="file" id="arquivo" accept=".pdf,.doc,.docx">
+
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="buttons">
+
+                <button onclick="voltar()" class="btn-secondary">
+
+                    Voltar
+
+                </button>
+
+                <button onclick="enviarProjeto()" class="btn-primary">
+
+                    Enviar Trabalho
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- MODAL DE LOGOUT -->
+    <div class="logout-modal" id="logoutModal">
+
+        <div class="modal-box">
+
+            <div class="modal-icon">
+                ⏻
+            </div>
+
+            <h2>
+                Encerrar Sessão
+            </h2>
+
+            <p>
+                Deseja realmente encerrar sua sessão no GPAcademy?
+            </p>
+
+            <div class="modal-buttons">
+
+                <button onclick="confirmarLogout()" class="btn-danger">
+
+                    Sim, sair
+
+                </button>
+
+                <button onclick="fecharModal()" class="btn-cancel">
+
+                    Cancelar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL DE SUCESSO -->
+    <div class="logout-modal" id="successModal">
+
+        <div class="modal-box">
+
+            <div class="modal-icon">
+                ✅
+            </div>
+
+            <h2>
+                Trabalho Enviado
+            </h2>
+
+            <p>
+                Seu trabalho foi enviado com sucesso!
+            </p>
+
+            <div class="modal-buttons">
+
+                <button onclick="fecharModalSucesso()" class="btn-danger">
+
+                    OK
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/responsive.js"></script>
+    <script src="../js/notificacoes.js"></script>
+    <script src="../js/detalhes-projeto-aluno.js"></script>
+
+</body>
+
+</html>
