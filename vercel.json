@@ -1,12 +1,13 @@
 {
     "version": 2,
-    "rewrites": [{
-            "source": "/api/backend/(.*)",
-            "destination": "https://gpacademy-nqca.onrender.com/$1"
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "https://gpacademy-nqca.onrender.com/\"
         },
         {
             "source": "/(.*)",
-            "destination": "/api/serve?path=/$1"
+            "destination": "/api"
         }
     ],
     "headers": [{
