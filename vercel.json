@@ -2,18 +2,11 @@
     "version": 2,
     "rewrites": [{
             "source": "/api/(.*)",
-            "destination": "https://gpacademy-nqca.onrender.com/$1"
+            "destination": "https://gpacademy-nqca.onrender.com/\"
         },
         {
             "source": "/(.*)",
-            "destination": "/api"
+            "destination": "/api?__path=/\"
         }
-    ],
-    "headers": [{
-        "source": "/(.*)",
-        "headers": [{
-            "key": "X-Content-Type-Options",
-            "value": "nosniff"
-        }]
-    }]
+    ]
 }

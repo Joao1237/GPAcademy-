@@ -1,27 +1,24 @@
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 module.exports = (req, res) => {
-    // Get the full URL path
-    let filePath = req.url || '/';
+    // Extract path from query parameter or URL
+    const parsedUrl = url.parse(req.url, true);
+    let filePath = parsedUrl.query.__path || parsedUrl.pathname || '/';
 
-    // Remove query parameters
-    filePath = filePath.split('?')[0];
-
-    // If root, serve login.html
-    if (filePath === '/') {
+    // Default to login.html for root
+    if (filePath === '/' || filePath === '') {
         filePath = '/pages/login.html';
     }
 
-    // Remove leading slash for path.join
+    // Remove leading slash
     if (filePath.startsWith('/')) {
         filePath = filePath.substring(1);
     }
 
-    // Build full file path (relative to repo root)
+    // Build full file path
     const fullPath = path.join(__dirname, '..', filePath);
-
-    console.log([API] Requested: \, Resolved: \);
 
     try {
         if (fs.existsSync(fullPath)) {
@@ -33,8 +30,8 @@ module.exports = (req, res) => {
             }
 
             const ext = path.extname(fullPath).toLowerCase();
-
             let contentType = 'text/plain';
+            
             if (ext === '.html') contentType = 'text/html; charset=utf-8';
             else if (ext === '.js') contentType = 'application/javascript';
             else if (ext === '.css') contentType = 'text/css';
@@ -52,7 +49,7 @@ module.exports = (req, res) => {
             return;
         }
     } catch (e) {
-        console.error([API] Error: \);
+        // Ignore errors
     }
 
     res.status(404).json({ error: 'File not found' });
