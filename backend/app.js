@@ -1,8 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 
 require('./config/db');
 
@@ -17,9 +17,9 @@ const grupoRoutes = require('./routes/grupoRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const origensPermitidas = process.env.FRONTEND_URL
-    ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-    : true;
+const origensPermitidas = process.env.FRONTEND_URL ?
+    process.env.FRONTEND_URL.split(',').map(url => url.trim()) :
+    true;
 
 app.use(cors({
     origin: origensPermitidas,

@@ -11,6 +11,8 @@ const pool = mysql.createPool({
     multipleStatements: true
 });
 
+// (debug logs removed)
+
 pool.getConnection((erro, conexao) => {
     if (erro) {
         console.error('Erro ao conectar ao MySQL:', erro.message);

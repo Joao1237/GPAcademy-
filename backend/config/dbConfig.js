@@ -1,4 +1,21 @@
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
+
 function obterConfigBanco(env = process.env) {
+    // fallback: se variáveis esperadas não estiverem em process.env,
+    // tente carregar `backend/.env` explicitamente (útil ao iniciar via npm --prefix)
+    if (!env.DB_HOST || !env.DB_USER) {
+        try {
+            const envPath = path.join(__dirname, '..', '.env');
+            if (fs.existsSync(envPath)) {
+                const parsed = dotenv.parse(fs.readFileSync(envPath));
+                env = Object.assign({}, parsed, env);
+            }
+        } catch (e) {
+            // ignore fallback errors
+        }
+    }
     const urlBanco =
         env.MYSQL_URL ||
         env.MYSQL_PUBLIC_URL ||
