@@ -1,3 +1,4 @@
+(function() {
 let filtroStatus = "Todos";
 let filtroTipo = "Todos";
 let filtroPeriodo = "Todos";
@@ -450,3 +451,4 @@ window.fecharDeleteModal = fecharDeleteModal;
 window.logout = logout;
 window.fecharModal = fecharModal;
 window.confirmarLogout = confirmarLogout;
+})();
