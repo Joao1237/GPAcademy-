@@ -217,6 +217,25 @@ body {
     justify-content: space-between;
 }
 
+.empty-state {
+    grid-column: 1 / -1;
+    background: white;
+    border-radius: 10px;
+    padding: 32px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    max-width: 520px;
+}
+
+.empty-state h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #5f7387;
+    margin-bottom: 20px;
+}
+
 .dots {
     position: absolute;
     top: 20px;

@@ -4,18 +4,77 @@ let filtroPeriodo = "Todos";
 let cardSelecionado = null;
 let filtrosInicializados = false;
 
+function idsIguaisFallback(a, b) {
+    return String(a) === String(b);
+}
+
+function calcularStatusProjetoFallback(entregas, statusProjeto, labelRecebido) {
+    const temAvaliado = entregas.some(
+        entrega => entrega.status === "AVALIADO"
+    );
+
+    const temRecebido = entregas.some(
+        entrega => entrega.status === "ENVIADO"
+    );
+
+    return {
+        temRecebido,
+        temAvaliado,
+        statusCalculado: temAvaliado ?
+            "Avaliado" :
+            temRecebido ? labelRecebido : statusProjeto || "Publicado"
+    };
+}
+
+function obterClasseStatusFallback(status) {
+    if (status === "Recebidos" || status === "Recebido") {
+        return "recebido";
+    }
+
+    if (status === "Avaliado") {
+        return "avaliado";
+    }
+
+    return (status || "Publicado").toLowerCase();
+}
+
+function statusPassaNoFiltroFallback(card, filtro) {
+    if (filtro === "Todos") {
+        return true;
+    }
+
+    if (filtro === "Recebidos" || filtro === "Recebido") {
+        return card.temRecebido === "true" ||
+            card.status === "Recebidos" ||
+            card.status === "Recebido";
+    }
+
+    if (filtro === "Avaliado") {
+        return card.temAvaliado === "true";
+    }
+
+    return card.status === filtro;
+}
+
+const projetoStatus = window.ProjetoStatus || {
+    idsIguais: idsIguaisFallback,
+    calcularStatusProjeto: calcularStatusProjetoFallback,
+    obterClasseStatus: obterClasseStatusFallback,
+    statusPassaNoFiltro: statusPassaNoFiltroFallback
+};
+
 const {
     idsIguais,
     calcularStatusProjeto,
     obterClasseStatus,
     statusPassaNoFiltro
-} = ProjetoStatus;
+} = projetoStatus;
 
 // Carrega os dados principais da tela
-window.onload = function() {
+document.addEventListener("DOMContentLoaded", function() {
     carregarUsuarioTopo();
     carregarProjetosProfessor();
-};
+});
 
 // Mostra o nome e o tipo do usuário logado no topo
 function carregarUsuarioTopo() {
@@ -34,6 +93,8 @@ function carregarUsuarioTopo() {
 function novoProjeto() {
     window.location.href = "novo-projeto.html";
 }
+
+window.novoProjeto = novoProjeto;
 
 // Carrega os projetos criados pelo professor logado
 async function carregarProjetosProfessor() {
@@ -58,6 +119,7 @@ async function carregarProjetosProfessor() {
         const vinculos = await respostaVinculos.json();
 
         gerarFiltrosPeriodos(vinculos);
+        configurarFiltros();
 
         container.innerHTML = "";
 
@@ -66,7 +128,15 @@ async function carregarProjetosProfessor() {
         );
 
         if (projetosFiltrados.length === 0) {
-            container.innerHTML = "<p>Nenhum projeto encontrado.</p>";
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h2>Nenhum projeto encontrado.</h2>
+                    <p>Crie um projeto para começar a receber entregas dos alunos.</p>
+                    <button type="button" onclick="novoProjeto()" class="btn-card">
+                        Criar Novo Projeto
+                    </button>
+                </div>
+            `;
             return;
         }
 
@@ -96,7 +166,6 @@ async function carregarProjetosProfessor() {
             );
         });
 
-        configurarFiltros();
         aplicarFiltros();
 
     } catch (erro) {
@@ -372,3 +441,12 @@ function confirmarLogout() {
     localStorage.removeItem("usuarioLogado");
     window.location.href = "login.html";
 }
+
+window.verEntregasIndividuais = verEntregasIndividuais;
+window.verEntregasGrupo = verEntregasGrupo;
+window.abrirMenuCard = abrirMenuCard;
+window.confirmarDelete = confirmarDelete;
+window.fecharDeleteModal = fecharDeleteModal;
+window.logout = logout;
+window.fecharModal = fecharModal;
+window.confirmarLogout = confirmarLogout;
