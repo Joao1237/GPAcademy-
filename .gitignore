@@ -5,6 +5,7 @@ node_modules/
 .DS_Store
 coverage/
 logs/
+tools/
 
 backend/uploads/*
 !backend/uploads/.gitkeep

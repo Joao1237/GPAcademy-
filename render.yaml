@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: gpacademy-api
+    name: GPAcademy-
     runtime: node
-    rootDir: backend
+    rootDir: .
     plan: free
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: cd backend && npm install
+    startCommand: npm --prefix backend start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
