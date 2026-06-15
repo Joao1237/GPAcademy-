@@ -129,15 +129,7 @@ async function carregarProjetosProfessor() {
         );
 
         if (projetosFiltrados.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <h2>Nenhum projeto encontrado.</h2>
-                    <p>Crie um projeto para começar a receber entregas dos alunos.</p>
-                    <button type="button" onclick="novoProjeto()" class="btn-card">
-                        Criar Novo Projeto
-                    </button>
-                </div>
-            `;
+            container.innerHTML = "<p>Nenhum projeto encontrado.</p>";
             return;
         }
 
