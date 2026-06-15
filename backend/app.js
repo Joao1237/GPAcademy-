@@ -17,12 +17,31 @@ const grupoRoutes = require('./routes/grupoRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const origensPermitidas = process.env.FRONTEND_URL ?
-    process.env.FRONTEND_URL.split(',').map(url => url.trim()) :
-    true;
+const origensPermitidas = new Set([
+    'http://localhost:5500',
+    'http://localhost:3000',
+    'https://gpacademy-web.onrender.com',
+    'https://gpacademy.onrender.com'
+]);
+
+if (process.env.FRONTEND_URL) {
+    process.env.FRONTEND_URL
+        .split(',')
+        .map(url => url.trim())
+        .filter(Boolean)
+        .forEach(url => origensPermitidas.add(url.replace(/\/$/, '')));
+}
+
+function validarOrigemCors(origin, callback) {
+    if (!origin || origensPermitidas.has(origin.replace(/\/$/, ''))) {
+        return callback(null, true);
+    }
+
+    return callback(new Error('Origem não permitida pelo CORS.'));
+}
 
 app.use(cors({
-    origin: origensPermitidas,
+    origin: validarOrigemCors,
     credentials: true
 }));
 app.use(express.json());

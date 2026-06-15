@@ -14,7 +14,7 @@ function obterConfigBanco(env = process.env) {
         env.MYSQL_PUBLIC_URL ||
         env.DATABASE_URL;
 
-    if (!possuiConfigBanco) {
+    if (!possuiConfigBanco && arguments.length === 0) {
         try {
             const envPath = path.join(__dirname, '..', '.env');
             if (fs.existsSync(envPath)) {
