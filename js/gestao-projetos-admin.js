@@ -43,13 +43,15 @@ function statusPassaNoFiltroFallback(card, filtro) {
     }
 
     if (filtro === "Recebidos" || filtro === "Recebido") {
-        return card.temRecebido === "true" ||
+        return card.temRecebido === true ||
+            card.temRecebido === "true" ||
             card.status === "Recebidos" ||
             card.status === "Recebido";
     }
 
     if (filtro === "Avaliado") {
-        return card.temAvaliado === "true";
+        return card.temAvaliado === true ||
+            card.temAvaliado === "true";
     }
 
     return card.status === filtro;
