@@ -142,7 +142,7 @@ function atualizarUsuario(id, usuario, callback) {
             tipo = ?,
             curso_id = ?,
             periodo = ?,
-            senha = ?
+            senha = COALESCE(?, senha)
         WHERE id = ?
     `;
 
@@ -153,7 +153,7 @@ function atualizarUsuario(id, usuario, callback) {
             usuario.tipo,
             usuario.curso_id || null,
             usuario.periodo || null,
-            usuario.senha,
+            usuario.senha || null,
             id
         ],
         callback

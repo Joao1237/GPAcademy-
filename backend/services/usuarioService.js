@@ -183,12 +183,28 @@ function buscarUsuarioPorId(id, callback) {
 function atualizarUsuario(id, usuario, callback) {
     if (!usuario.nome ||
         !usuario.email ||
-        !usuario.tipo ||
-        !usuario.senha
+        !usuario.tipo
     ) {
         return callback({
             status: 400,
             mensagem: 'Preencha todos os campos obrigatórios.'
+        });
+    }
+
+    if (!usuario.senha) {
+        return usuarioRepository.atualizarUsuario(id, usuario, (erro) => {
+            if (erro) {
+                console.error('Erro ao atualizar usuário:', erro);
+
+                return callback({
+                    status: 500,
+                    mensagem: 'Erro ao atualizar usuário.'
+                });
+            }
+
+            callback(null, {
+                mensagem: 'Usuário atualizado com sucesso!'
+            });
         });
     }
 

@@ -207,6 +207,28 @@ describe('usuarioService', () => {
         expect(resultado.mensagem).toContain('atualizado');
     });
 
+    test('atualizarUsuario preserva senha quando nova senha não é enviada', async () => {
+        usuarioRepository.atualizarUsuario.mockImplementation(
+            (id, usuario, callback) => callback(null)
+        );
+
+        const resultado = await executarServico(
+            usuarioService.atualizarUsuario,
+            1,
+            {
+                nome: 'Ana',
+                email: 'ana@test.com',
+                tipo: 'ALUNO'
+            }
+        );
+
+        const usuarioAtualizado =
+            usuarioRepository.atualizarUsuario.mock.calls[0][1];
+
+        expect(resultado.mensagem).toContain('atualizado');
+        expect(usuarioAtualizado.senha).toBeUndefined();
+    });
+
     test('cadastrarUsuario retorna erro do repositório', async () => {
         usuarioRepository.cadastrarUsuario.mockImplementation(
             (usuario, callback) => callback(new Error('falha'))

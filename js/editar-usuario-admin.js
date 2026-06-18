@@ -43,7 +43,7 @@ function preencherDadosUsuario() {
     document.getElementById("nome").value = usuarioAtual.nome;
     document.getElementById("email").value = usuarioAtual.email;
     document.getElementById("perfil").value = usuarioAtual.tipo;
-    document.getElementById("senha").value = usuarioAtual.senha || "";
+    document.getElementById("senha").value = "";
 }
 
 // Carrega os cursos cadastrados no banco
@@ -118,19 +118,23 @@ function preencherCursoPeriodo() {
 async function salvar() {
     const usuarioId = localStorage.getItem("usuarioEditar");
 
+    const novaSenha = document.getElementById("senha").value.trim();
+
     const usuario = {
         nome: document.getElementById("nome").value,
         email: document.getElementById("email").value,
         tipo: document.getElementById("perfil").value,
         curso_id: document.getElementById("curso").value || null,
-        periodo: document.getElementById("periodo").value || null,
-        senha: document.getElementById("senha").value
+        periodo: document.getElementById("periodo").value || null
     };
+
+    if (novaSenha) {
+        usuario.senha = novaSenha;
+    }
 
     if (!usuario.nome ||
         !usuario.email ||
-        !usuario.tipo ||
-        !usuario.senha
+        !usuario.tipo
     ) {
         alert("Preencha os campos obrigatórios.");
         return;
