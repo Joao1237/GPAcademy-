@@ -71,7 +71,7 @@
             </div>
 
             <!-- Logout -->
-            <button onclick="logout()" class="logout-btn">
+            <button type="button" onclick="logout()" class="logout-btn" id="btnLogoutAdminProjetos">
 
                 ⏻
 
@@ -94,38 +94,38 @@
         </p>
 
         <!-- Filtro por status -->
-        <div class="filters">
+        <div class="filters" data-filter="status">
 
             <strong>
                 STATUS
             </strong>
 
-            <button class="active-filter">
+            <button type="button" class="active-filter" data-value="Todos">
                 Todos
             </button>
 
-            <button>
+            <button type="button" data-value="Publicado">
                 Publicado
             </button>
 
-            <button>
+            <button type="button" data-value="Recebidos">
                 Recebidos
             </button>
 
-            <button>
+            <button type="button" data-value="Avaliado">
                 Avaliado
             </button>
 
         </div>
 
         <!-- Filtro por curso -->
-        <div class="filters" id="filtrosCursos">
+        <div class="filters" id="filtrosCursos" data-filter="curso">
 
             <strong>
                 CURSO
             </strong>
 
-            <button class="active-filter">
+            <button type="button" class="active-filter" data-value="Todos">
                 Todos
             </button>
 

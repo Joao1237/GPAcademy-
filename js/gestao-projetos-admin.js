@@ -70,6 +70,8 @@ const {
 
 document.addEventListener("DOMContentLoaded", function() {
     carregarUsuarioTopo();
+    configurarAcoesFixas();
+    configurarFiltros();
     carregarProjetosAdmin();
 });
 
@@ -224,14 +226,19 @@ function montarFiltrosCursos() {
 
     filtroCursos.innerHTML = `
         <strong>CURSO</strong>
-        <button class="${filtroCurso === "Todos" ? "active-filter" : ""}">
+        <button
+            type="button"
+            data-value="Todos"
+            class="${filtroCurso === "Todos" ? "active-filter" : ""}">
             Todos
         </button>
     `;
 
     cursos.forEach(curso => {
         const botao = document.createElement("button");
+        botao.type = "button";
         botao.textContent = curso;
+        botao.dataset.value = curso;
 
         if (curso === filtroCurso) {
             botao.classList.add("active-filter");
@@ -242,39 +249,41 @@ function montarFiltrosCursos() {
 }
 
 function configurarFiltros() {
-    const gruposFiltros = document.querySelectorAll(".filters");
+    document.querySelectorAll(".filters").forEach(grupo => {
+        atualizarFiltroAtivo(grupo);
+    });
+}
 
-    gruposFiltros.forEach(grupo => {
-        if (grupo.dataset.filtrosConfigurados === "true") {
-            return;
-        }
+document.addEventListener("click", event => {
+    const botao = event.target.closest(".filters button");
 
-        grupo.dataset.filtrosConfigurados = "true";
-        const tipoFiltro = grupo.querySelector("strong").textContent.trim();
+    if (!botao) {
+        return;
+    }
 
-        grupo.addEventListener("click", event => {
-            const botao = event.target.closest("button");
+    const grupo = botao.closest(".filters");
+    const tipoFiltro = grupo.dataset.filter;
+    const valorFiltro = botao.dataset.value || botao.textContent.trim();
 
-            if (!botao || !grupo.contains(botao)) {
-                return;
-            }
+    if (tipoFiltro === "status") {
+        filtroStatus = valorFiltro;
+    }
 
-            grupo
-                .querySelectorAll("button")
-                .forEach(btn => btn.classList.remove("active-filter"));
+    if (tipoFiltro === "curso") {
+        filtroCurso = valorFiltro;
+    }
 
-            botao.classList.add("active-filter");
+    atualizarFiltroAtivo(grupo);
+    aplicarFiltros();
+});
 
-            if (tipoFiltro === "STATUS") {
-                filtroStatus = botao.textContent.trim();
-            }
+function atualizarFiltroAtivo(grupo) {
+    const tipoFiltro = grupo.dataset.filter;
+    const valorAtual = tipoFiltro === "status" ? filtroStatus : filtroCurso;
 
-            if (tipoFiltro === "CURSO") {
-                filtroCurso = botao.textContent.trim();
-            }
-
-            aplicarFiltros();
-        });
+    grupo.querySelectorAll("button").forEach(botao => {
+        const valorBotao = botao.dataset.value || botao.textContent.trim();
+        botao.classList.toggle("active-filter", valorBotao === valorAtual);
     });
 }
 
@@ -299,7 +308,7 @@ function aplicarFiltros() {
 
         const visivel = statusOk && cursoOk;
 
-        card.style.display = visivel ? "flex" : "none";
+        card.style.display = visivel ? "" : "none";
 
         if (visivel) {
             totalVisiveis++;
@@ -368,6 +377,17 @@ document.addEventListener("click", () => {
     removerMenus();
 });
 
+function configurarAcoesFixas() {
+    const botaoLogout = document.getElementById("btnLogoutAdminProjetos");
+
+    if (botaoLogout) {
+        botaoLogout.addEventListener("click", event => {
+            event.preventDefault();
+            logout();
+        });
+    }
+}
+
 function abrirDeleteModal(card) {
     cardSelecionado = card;
     document.getElementById("deleteModal").style.display = "flex";
@@ -418,11 +438,19 @@ async function confirmarDelete() {
 }
 
 function logout() {
-    document.getElementById("logoutModal").style.display = "flex";
+    const modal = document.getElementById("logoutModal");
+
+    if (modal) {
+        modal.style.display = "flex";
+    }
 }
 
 function fecharModal() {
-    document.getElementById("logoutModal").style.display = "none";
+    const modal = document.getElementById("logoutModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 function confirmarLogout() {
@@ -445,3 +473,10 @@ function carregarUsuarioTopo() {
     document.getElementById("tipoUsuario").textContent =
         usuarioLogado.tipo;
 }
+
+window.logout = logout;
+window.fecharModal = fecharModal;
+window.confirmarLogout = confirmarLogout;
+window.abrirMenuCard = abrirMenuCard;
+window.confirmarDelete = confirmarDelete;
+window.fecharDeleteModal = fecharDeleteModal;
