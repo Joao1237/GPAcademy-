@@ -11,12 +11,17 @@ async function carregarEntrega() {
     const tipoFeedback = localStorage.getItem("tipoFeedback");
 
     const infoEntrega = document.getElementById("infoEntrega");
+    mostrarTituloProjeto();
 
     try {
         const url = obterUrlEntregas(tipoFeedback, projetoId);
 
-        const resposta = await fetch(url);
-        const entregas = await resposta.json();
+        const [entregas] = await Promise.all([
+            buscarJson(url),
+            carregarTituloProjeto(projetoId).catch(erro => {
+                console.warn("Erro ao carregar título do projeto:", erro);
+            })
+        ]);
 
         entregaAtual = encontrarEntrega(entregas, entregaId, tipoFeedback);
 
@@ -32,6 +37,38 @@ async function carregarEntrega() {
     } catch (erro) {
         console.error("Erro ao carregar entrega:", erro);
         infoEntrega.innerHTML = "<p>Erro ao carregar entrega.</p>";
+    }
+}
+
+async function buscarJson(url) {
+    const resposta = await fetch(url);
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+        throw new Error(dados.mensagem || "Erro ao buscar dados.");
+    }
+
+    return dados;
+}
+
+function mostrarTituloProjeto(titulo) {
+    const tituloElemento = document.querySelector(".feedback-box h2");
+    const tituloSalvo = titulo || localStorage.getItem("projetoTituloProfessor");
+
+    tituloElemento.textContent = tituloSalvo || "Projeto selecionado";
+}
+
+async function carregarTituloProjeto(projetoId) {
+    if (!projetoId) {
+        return;
+    }
+
+    const projetos = await buscarJson(`${API_URL}/projetos`);
+    const projeto = projetos.find(item => String(item.id) === String(projetoId));
+
+    if (projeto && projeto.titulo) {
+        localStorage.setItem("projetoTituloProfessor", projeto.titulo);
+        mostrarTituloProjeto(projeto.titulo);
     }
 }
 

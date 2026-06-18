@@ -57,11 +57,39 @@ function listarUsuarios(callback) {
             u.email,
             u.tipo,
             u.curso_id,
-            u.periodo,
-            c.nome AS nomeCurso
+            CASE
+                WHEN u.tipo = 'PROFESSOR' THEN
+                    GROUP_CONCAT(
+                        DISTINCT cp.nome
+                        ORDER BY cp.nome
+                        SEPARATOR ', '
+                    )
+                ELSE c.nome
+            END AS nomeCurso,
+            CASE
+                WHEN u.tipo = 'PROFESSOR' THEN
+                    GROUP_CONCAT(
+                        DISTINCT pc.periodo
+                        ORDER BY pc.periodo
+                        SEPARATOR ', '
+                    )
+                ELSE u.periodo
+            END AS periodo
         FROM usuarios u
         LEFT JOIN cursos c
             ON c.id = u.curso_id
+        LEFT JOIN professor_cursos pc
+            ON pc.professor_id = u.id
+        LEFT JOIN cursos cp
+            ON cp.id = pc.curso_id
+        GROUP BY
+            u.id,
+            u.nome,
+            u.email,
+            u.tipo,
+            u.curso_id,
+            u.periodo,
+            c.nome
         ORDER BY u.id DESC
     `;
 

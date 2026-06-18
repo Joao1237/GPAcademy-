@@ -19,11 +19,8 @@ async function carregarProjetosAdmin() {
     const container = document.getElementById("cardsProjetos");
 
     try {
-        const resposta = await fetch(`${API_URL}/projetos`);
-        const projetos = await resposta.json();
-
-        const respostaEntregas = await fetch(`${API_URL}/entregas`);
-        const entregas = await respostaEntregas.json();
+        const projetos = await buscarJson(`${API_URL}/projetos`);
+        const entregas = await buscarJson(`${API_URL}/entregas`, []);
 
         container.innerHTML = "";
 
@@ -58,6 +55,26 @@ async function carregarProjetosAdmin() {
     } catch (erro) {
         console.log(erro);
         container.innerHTML = "<p>Erro ao carregar projetos.</p>";
+    }
+}
+
+async function buscarJson(url, valorPadrao) {
+    try {
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(dados.mensagem || "Erro ao buscar dados.");
+        }
+
+        return dados;
+    } catch (erro) {
+        if (valorPadrao !== undefined) {
+            console.warn("Falha em busca opcional:", url, erro);
+            return valorPadrao;
+        }
+
+        throw erro;
     }
 }
 
@@ -147,33 +164,38 @@ function montarFiltrosCursos() {
 }
 
 function configurarFiltros() {
-    if (filtrosInicializados) {
-        return;
-    }
-
-    filtrosInicializados = true;
-
     const gruposFiltros = document.querySelectorAll(".filters");
 
     gruposFiltros.forEach(grupo => {
-        const botoes = grupo.querySelectorAll("button");
+        if (grupo.dataset.filtrosConfigurados === "true") {
+            return;
+        }
+
+        grupo.dataset.filtrosConfigurados = "true";
         const tipoFiltro = grupo.querySelector("strong").textContent.trim();
 
-        botoes.forEach(botao => {
-            botao.addEventListener("click", () => {
-                botoes.forEach(btn => btn.classList.remove("active-filter"));
-                botao.classList.add("active-filter");
+        grupo.addEventListener("click", event => {
+            const botao = event.target.closest("button");
 
-                if (tipoFiltro === "STATUS") {
-                    filtroStatus = botao.textContent.trim();
-                }
+            if (!botao || !grupo.contains(botao)) {
+                return;
+            }
 
-                if (tipoFiltro === "CURSO") {
-                    filtroCurso = botao.textContent.trim();
-                }
+            grupo
+                .querySelectorAll("button")
+                .forEach(btn => btn.classList.remove("active-filter"));
 
-                aplicarFiltros();
-            });
+            botao.classList.add("active-filter");
+
+            if (tipoFiltro === "STATUS") {
+                filtroStatus = botao.textContent.trim();
+            }
+
+            if (tipoFiltro === "CURSO") {
+                filtroCurso = botao.textContent.trim();
+            }
+
+            aplicarFiltros();
         });
     });
 }

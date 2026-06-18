@@ -189,6 +189,7 @@ function criarCardProjeto(projeto, nomeCurso) {
     card.dataset.temAvaliado = projeto.temAvaliado ? "true" : "false";
     card.dataset.tipo = tipoFormatado;
     card.dataset.periodo = periodoFormatado;
+    card.dataset.titulo = projeto.titulo;
 
     card.innerHTML = `
         <button class="dots" onclick="abrirMenuCard(event, this)">⋮</button>
@@ -235,6 +236,7 @@ function criarCardProjeto(projeto, nomeCurso) {
 function verEntregasIndividuais(projetoId) {
     localStorage.setItem("projetoSelecionadoProfessor", projetoId);
     localStorage.setItem("tipoEntrega", "individual");
+    salvarTituloProjetoSelecionado(projetoId);
 
     window.location.href = "lista-entregas-professor.html";
 }
@@ -243,8 +245,17 @@ function verEntregasIndividuais(projetoId) {
 function verEntregasGrupo(projetoId) {
     localStorage.setItem("projetoSelecionadoProfessor", projetoId);
     localStorage.setItem("tipoEntrega", "grupo");
+    salvarTituloProjetoSelecionado(projetoId);
 
     window.location.href = "lista-entregas-professor.html";
+}
+
+function salvarTituloProjetoSelecionado(projetoId) {
+    const card = document.querySelector(`.card[data-id="${projetoId}"]`);
+
+    if (card && card.dataset.titulo) {
+        localStorage.setItem("projetoTituloProfessor", card.dataset.titulo);
+    }
 }
 
 // Configura os botões de filtro da tela

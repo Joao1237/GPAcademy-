@@ -1,12 +1,16 @@
 let usuarioAtual = null;
+let cursosDisponiveis = [];
 
 // Carrega os dados necessários para a tela
 window.onload = async function() {
     await carregarUsuario();
     await carregarCursos();
 
-    gerarPeriodos();
     preencherCursoPeriodo();
+
+    document.getElementById("curso").addEventListener("change", () => {
+        gerarPeriodos();
+    });
 };
 
 // Busca os dados do usuário selecionado
@@ -48,16 +52,17 @@ async function carregarCursos() {
 
     try {
         const resposta = await fetch(`${API_URL}/cursos`);
-        const cursos = await resposta.json();
+        cursosDisponiveis = await resposta.json();
 
         selectCurso.innerHTML =
             `<option value="">Selecione o curso</option>`;
 
-        cursos.forEach(curso => {
+        cursosDisponiveis.forEach(curso => {
             const option = document.createElement("option");
 
             option.value = curso.id;
             option.textContent = curso.nome;
+            option.setAttribute("data-periodos", curso.quantidadePeriodos);
 
             selectCurso.appendChild(option);
         });
@@ -72,12 +77,23 @@ async function carregarCursos() {
 
 // Gera os períodos disponíveis
 function gerarPeriodos() {
+    const selectCurso = document.getElementById("curso");
     const selectPeriodo = document.getElementById("periodo");
+    const optionSelecionada = selectCurso.options[selectCurso.selectedIndex];
+    const quantidadePeriodos =
+        optionSelecionada &&
+        optionSelecionada.getAttribute("data-periodos");
 
     selectPeriodo.innerHTML =
         `<option value="">Selecione o período</option>`;
 
-    for (let i = 1; i <= 8; i++) {
+    if (!quantidadePeriodos) {
+        selectPeriodo.innerHTML =
+            `<option value="">Selecione um curso primeiro</option>`;
+        return;
+    }
+
+    for (let i = 1; i <= Number(quantidadePeriodos); i++) {
         const option = document.createElement("option");
 
         option.value = i;
@@ -91,6 +107,8 @@ function gerarPeriodos() {
 function preencherCursoPeriodo() {
     document.getElementById("curso").value =
         usuarioAtual.curso_id || "";
+
+    gerarPeriodos();
 
     document.getElementById("periodo").value =
         usuarioAtual.periodo || "";

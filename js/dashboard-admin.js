@@ -31,9 +31,7 @@ async function carregarUsuarios() {
 
         usuarios.forEach(usuario => {
             const curso = usuario.nomeCurso || "-";
-            const periodo = usuario.periodo ?
-                `${usuario.periodo}º Período` :
-                "-";
+            const periodo = formatarPeriodoUsuario(usuario.periodo);
 
             const tr = document.createElement("tr");
 
@@ -77,6 +75,19 @@ async function carregarUsuarios() {
             </tr>
         `;
     }
+}
+
+function formatarPeriodoUsuario(periodo) {
+    if (!periodo) {
+        return "-";
+    }
+
+    return String(periodo)
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean)
+        .map(item => `${item}º Período`)
+        .join(", ");
 }
 
 // Vai para a tela de cadastro de usuário
