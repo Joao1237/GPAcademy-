@@ -1,22 +1,81 @@
 let filtroStatus = "Todos";
 let filtroCurso = "Todos";
 let cardSelecionado = null;
-let filtrosInicializados = false;
+
+function idsIguaisFallback(a, b) {
+    return String(a) === String(b);
+}
+
+function calcularStatusProjetoFallback(entregas, statusProjeto, labelRecebido) {
+    const temAvaliado = entregas.some(
+        entrega => entrega.status === "AVALIADO"
+    );
+
+    const temRecebido = entregas.some(
+        entrega => entrega.status === "ENVIADO"
+    );
+
+    return {
+        temRecebido,
+        temAvaliado,
+        statusCalculado: temAvaliado ?
+            "Avaliado" :
+            temRecebido ? labelRecebido : statusProjeto || "Publicado"
+    };
+}
+
+function obterClasseStatusFallback(status) {
+    if (status === "Recebidos" || status === "Recebido") {
+        return "recebido";
+    }
+
+    if (status === "Avaliado") {
+        return "avaliado";
+    }
+
+    return (status || "Publicado").toLowerCase();
+}
+
+function statusPassaNoFiltroFallback(card, filtro) {
+    if (filtro === "Todos") {
+        return true;
+    }
+
+    if (filtro === "Recebidos" || filtro === "Recebido") {
+        return card.temRecebido === "true" ||
+            card.status === "Recebidos" ||
+            card.status === "Recebido";
+    }
+
+    if (filtro === "Avaliado") {
+        return card.temAvaliado === "true";
+    }
+
+    return card.status === filtro;
+}
+
+const projetoStatus = window.ProjetoStatus || {
+    idsIguais: idsIguaisFallback,
+    calcularStatusProjeto: calcularStatusProjetoFallback,
+    obterClasseStatus: obterClasseStatusFallback,
+    statusPassaNoFiltro: statusPassaNoFiltroFallback
+};
 
 const {
     idsIguais,
     calcularStatusProjeto,
     obterClasseStatus,
     statusPassaNoFiltro
-} = ProjetoStatus;
+} = projetoStatus;
 
-window.onload = function() {
+document.addEventListener("DOMContentLoaded", function() {
     carregarUsuarioTopo();
     carregarProjetosAdmin();
-};
+});
 
 async function carregarProjetosAdmin() {
     const container = document.getElementById("cardsProjetos");
+    renderizarMensagem(container, "Carregando projetos...");
 
     try {
         const projetos = await buscarJson(`${API_URL}/projetos`);
@@ -24,8 +83,12 @@ async function carregarProjetosAdmin() {
 
         container.innerHTML = "";
 
+        if (!Array.isArray(projetos)) {
+            throw new Error("Resposta inválida ao buscar projetos.");
+        }
+
         if (projetos.length === 0) {
-            container.innerHTML = "<p>Nenhum projeto cadastrado.</p>";
+            renderizarMensagem(container, "Nenhum projeto cadastrado.");
             return;
         }
 
@@ -54,8 +117,12 @@ async function carregarProjetosAdmin() {
 
     } catch (erro) {
         console.log(erro);
-        container.innerHTML = "<p>Erro ao carregar projetos.</p>";
+        renderizarMensagem(container, "Erro ao carregar projetos.");
     }
+}
+
+function renderizarMensagem(container, mensagem) {
+    container.innerHTML = `<p class="sem-resultados-admin">${mensagem}</p>`;
 }
 
 async function buscarJson(url, valorPadrao) {
@@ -151,14 +218,25 @@ function montarFiltrosCursos() {
         }
     });
 
+    if (filtroCurso !== "Todos" && !cursos.includes(filtroCurso)) {
+        filtroCurso = "Todos";
+    }
+
     filtroCursos.innerHTML = `
         <strong>CURSO</strong>
-        <button class="active-filter">Todos</button>
+        <button class="${filtroCurso === "Todos" ? "active-filter" : ""}">
+            Todos
+        </button>
     `;
 
     cursos.forEach(curso => {
         const botao = document.createElement("button");
         botao.textContent = curso;
+
+        if (curso === filtroCurso) {
+            botao.classList.add("active-filter");
+        }
+
         filtroCursos.appendChild(botao);
     });
 }
@@ -202,6 +280,7 @@ function configurarFiltros() {
 
 function aplicarFiltros() {
     const cards = document.querySelectorAll(".card");
+    let totalVisiveis = 0;
 
     cards.forEach(card => {
         const cursoCard = card.dataset.curso;
@@ -218,9 +297,38 @@ function aplicarFiltros() {
         const cursoOk =
             filtroCurso === "Todos" || cursoCard === filtroCurso;
 
-        card.style.display =
-            statusOk && cursoOk ? "flex" : "none";
+        const visivel = statusOk && cursoOk;
+
+        card.style.display = visivel ? "flex" : "none";
+
+        if (visivel) {
+            totalVisiveis++;
+        }
     });
+
+    atualizarMensagemFiltros(totalVisiveis);
+}
+
+function atualizarMensagemFiltros(totalVisiveis) {
+    const container = document.getElementById("cardsProjetos");
+    let mensagem = document.getElementById("mensagemFiltrosProjetos");
+
+    if (totalVisiveis > 0) {
+        if (mensagem) {
+            mensagem.remove();
+        }
+
+        return;
+    }
+
+    if (!mensagem) {
+        mensagem = document.createElement("p");
+        mensagem.id = "mensagemFiltrosProjetos";
+        mensagem.className = "sem-resultados-admin";
+        container.appendChild(mensagem);
+    }
+
+    mensagem.textContent = "Nenhum projeto encontrado com os filtros atuais.";
 }
 
 function abrirMenuCard(event, botao) {

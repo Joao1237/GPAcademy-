@@ -108,25 +108,20 @@ async function carregarProjetosProfessor() {
     }
 
     try {
-        const respostaProjetos = await fetch(`${API_URL}/projetos`);
-        const projetos = await respostaProjetos.json();
-
-        const respostaEntregas = await fetch(`${API_URL}/entregas`);
-        const entregas = await respostaEntregas.json();
-
-        const respostaVinculos = await fetch(
-            `${API_URL}/professor-cursos/${usuarioLogado.id}`
-        );
-        const vinculos = await respostaVinculos.json();
-
-        gerarFiltrosPeriodos(vinculos);
-        configurarFiltros();
+        const [projetos, entregas, vinculos] = await Promise.all([
+            buscarJson(`${API_URL}/projetos`),
+            buscarJson(`${API_URL}/entregas`, []),
+            buscarJson(`${API_URL}/professor-cursos/${usuarioLogado.id}`, [])
+        ]);
 
         container.innerHTML = "";
 
         const projetosFiltrados = projetos.filter(
             projeto => idsIguais(projeto.professor_id, usuarioLogado.id)
         );
+
+        gerarFiltrosPeriodos(vinculos, projetosFiltrados);
+        configurarFiltros();
 
         if (projetosFiltrados.length === 0) {
             container.innerHTML = "<p>Nenhum projeto encontrado.</p>";
@@ -149,13 +144,14 @@ async function carregarProjetosProfessor() {
             projeto.statusCalculado = statusProjeto.statusCalculado;
 
             const vinculo = vinculos.find(v =>
-                v.curso_id === projeto.curso_id &&
-                v.periodo === projeto.periodo
+                idsIguais(v.curso_id, projeto.curso_id) &&
+                idsIguais(v.periodo, projeto.periodo)
             );
 
             criarCardProjeto(
                 projeto,
-                vinculo ? vinculo.nomeCurso : "Curso não informado"
+                vinculo ? vinculo.nomeCurso :
+                    projeto.nomeCurso || "Curso não informado"
             );
         });
 
@@ -258,6 +254,26 @@ function salvarTituloProjetoSelecionado(projetoId) {
     }
 }
 
+async function buscarJson(url, valorPadrao) {
+    try {
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(dados.mensagem || "Erro ao buscar dados.");
+        }
+
+        return dados;
+    } catch (erro) {
+        if (valorPadrao !== undefined) {
+            console.warn("Falha em busca opcional:", url, erro);
+            return valorPadrao;
+        }
+
+        throw erro;
+    }
+}
+
 // Configura os botões de filtro da tela
 function configurarFiltros() {
     if (filtrosInicializados) {
@@ -322,7 +338,7 @@ function aplicarFiltros() {
 }
 
 // Gera o filtro de períodos de acordo com os vínculos do professor
-function gerarFiltrosPeriodos(vinculos) {
+function gerarFiltrosPeriodos(vinculos, projetos) {
     const filtroPeriodos = document.getElementById("filtroPeriodos");
 
     filtroPeriodos.innerHTML = `
@@ -333,8 +349,18 @@ function gerarFiltrosPeriodos(vinculos) {
     const periodosUnicos = [];
 
     vinculos.forEach(vinculo => {
-        if (!periodosUnicos.includes(vinculo.periodo)) {
-            periodosUnicos.push(vinculo.periodo);
+        const periodo = Number(vinculo.periodo);
+
+        if (periodo && !periodosUnicos.includes(periodo)) {
+            periodosUnicos.push(periodo);
+        }
+    });
+
+    projetos.forEach(projeto => {
+        const periodo = Number(projeto.periodo);
+
+        if (periodo && !periodosUnicos.includes(periodo)) {
+            periodosUnicos.push(periodo);
         }
     });
 

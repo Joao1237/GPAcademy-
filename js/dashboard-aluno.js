@@ -20,8 +20,9 @@ function carregarUsuarioTopo() {
 async function carregarProjetosAluno() {
     const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
     const container = document.querySelector(".cards");
+    const tipoUsuario = usuarioLogado && String(usuarioLogado.tipo).toUpperCase();
 
-    if (!usuarioLogado || usuarioLogado.tipo !== "ALUNO") {
+    if (!usuarioLogado || tipoUsuario !== "ALUNO") {
         window.location.href = "login.html";
         return;
     }
@@ -32,6 +33,10 @@ async function carregarProjetosAluno() {
         );
 
         const projetos = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(projetos.mensagem || "Erro ao buscar projetos.");
+        }
 
         container.innerHTML = "";
 
