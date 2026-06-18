@@ -1,6 +1,7 @@
 let filtroStatus = "Todos";
 let filtroCurso = "Todos";
 let cardSelecionado = null;
+let projetosAdmin = [];
 
 function idsIguaisFallback(a, b) {
     return String(a) === String(b);
@@ -94,8 +95,7 @@ async function carregarProjetosAdmin() {
             return;
         }
 
-        projetos.forEach(projeto => {
-
+        projetosAdmin = projetos.map(projeto => {
             const entregasDoProjeto = entregas.filter(
                 entrega => idsIguais(entrega.projeto_id, projeto.id)
             );
@@ -106,16 +106,17 @@ async function carregarProjetosAdmin() {
                 "Recebidos"
             );
 
-            projeto.temRecebido = statusProjeto.temRecebido;
-            projeto.temAvaliado = statusProjeto.temAvaliado;
-            projeto.statusCalculado = statusProjeto.statusCalculado;
-
-            criarCardProjeto(projeto);
+            return {
+                ...projeto,
+                temRecebido: statusProjeto.temRecebido,
+                temAvaliado: statusProjeto.temAvaliado,
+                statusCalculado: statusProjeto.statusCalculado
+            };
         });
 
         montarFiltrosCursos();
         configurarFiltros();
-        aplicarFiltros();
+        renderizarProjetosFiltrados();
 
     } catch (erro) {
         console.log(erro);
@@ -209,16 +210,11 @@ function montarFiltrosCursos() {
         return;
     }
 
-    const cards = document.querySelectorAll(".card");
-    const cursos = [];
-
-    cards.forEach(card => {
-        const curso = card.dataset.curso;
-
-        if (curso && !cursos.includes(curso)) {
-            cursos.push(curso);
-        }
-    });
+    const cursos = [...new Set(
+        projetosAdmin
+            .map(projeto => projeto.nomeCurso || `Curso ${projeto.curso_id}`)
+            .filter(Boolean)
+    )].sort();
 
     if (filtroCurso !== "Todos" && !cursos.includes(filtroCurso)) {
         filtroCurso = "Todos";
@@ -274,7 +270,7 @@ document.addEventListener("click", event => {
     }
 
     atualizarFiltroAtivo(grupo);
-    aplicarFiltros();
+    renderizarProjetosFiltrados();
 });
 
 function atualizarFiltroAtivo(grupo) {
@@ -287,57 +283,40 @@ function atualizarFiltroAtivo(grupo) {
     });
 }
 
-function aplicarFiltros() {
-    const cards = document.querySelectorAll(".card");
-    let totalVisiveis = 0;
-
-    cards.forEach(card => {
-        const cursoCard = card.dataset.curso;
-
-        const dadosCard = {
-            temRecebido: card.dataset.temRecebido,
-            temAvaliado: card.dataset.temAvaliado,
-            status: card.dataset.status,
-            curso: cursoCard
-        };
-
-        const statusOk = statusPassaNoFiltro(dadosCard, filtroStatus);
-
-        const cursoOk =
-            filtroCurso === "Todos" || cursoCard === filtroCurso;
-
-        const visivel = statusOk && cursoOk;
-
-        card.style.display = visivel ? "" : "none";
-
-        if (visivel) {
-            totalVisiveis++;
-        }
-    });
-
-    atualizarMensagemFiltros(totalVisiveis);
-}
-
-function atualizarMensagemFiltros(totalVisiveis) {
+function renderizarProjetosFiltrados() {
     const container = document.getElementById("cardsProjetos");
-    let mensagem = document.getElementById("mensagemFiltrosProjetos");
+    const projetosFiltrados = projetosAdmin.filter(projetoPassaFiltros);
 
-    if (totalVisiveis > 0) {
-        if (mensagem) {
-            mensagem.remove();
-        }
+    container.innerHTML = "";
 
+    if (projetosFiltrados.length === 0) {
+        renderizarMensagem(
+            container,
+            "Nenhum projeto encontrado com os filtros atuais."
+        );
         return;
     }
 
-    if (!mensagem) {
-        mensagem = document.createElement("p");
-        mensagem.id = "mensagemFiltrosProjetos";
-        mensagem.className = "sem-resultados-admin";
-        container.appendChild(mensagem);
-    }
+    projetosFiltrados.forEach(criarCardProjeto);
+}
 
-    mensagem.textContent = "Nenhum projeto encontrado com os filtros atuais.";
+function projetoPassaFiltros(projeto) {
+    const cursoProjeto = projeto.nomeCurso || `Curso ${projeto.curso_id}`;
+    const statusProjeto = projeto.statusCalculado || projeto.status || "Publicado";
+
+    const statusOk = statusPassaNoFiltro(
+        {
+            temRecebido: projeto.temRecebido,
+            temAvaliado: projeto.temAvaliado,
+            status: statusProjeto
+        },
+        filtroStatus
+    );
+
+    const cursoOk =
+        filtroCurso === "Todos" || cursoProjeto === filtroCurso;
+
+    return statusOk && cursoOk;
 }
 
 function abrirMenuCard(event, botao) {
@@ -423,6 +402,11 @@ async function confirmarDelete() {
         }
 
         cardSelecionado.remove();
+        projetosAdmin = projetosAdmin.filter(
+            projeto => !idsIguais(projeto.id, projetoId)
+        );
+        montarFiltrosCursos();
+        renderizarProjetosFiltrados();
         cardSelecionado = null;
 
         fecharDeleteModal();
